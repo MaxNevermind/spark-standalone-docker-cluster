@@ -1,14 +1,14 @@
 
-#Description:
+# Description:
 
 This project can be used for creating Spark standalone cluster on Docker. It includes a docker file for creating 
 a Spark Docker container and a deployment script.
 
-#Deployment on a cloud
+# Deployment on a cloud
 - Set deployment config env variables. You can find an example of how to properly set them in a file(`deploy-config.sh`).
 - Run a deployment script(`deploy.sh`) 
 
-##Prerequisites:
+## Prerequisites:
 - Docker is has to be installed on cluster machines.
 - You need password-less SSH login to each of the machines in a cluster from a deployment machine.
 
