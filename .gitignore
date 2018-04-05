@@ -1,0 +1,14 @@
+.cache
+target/
+target/*
+./.settings/
+./.settings/*
+data/
+data/*
+bin/
+.classpath
+.settings/
+.project
+.DS_Store
+*.iml
+/.idea/*
