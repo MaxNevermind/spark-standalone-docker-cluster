@@ -12,5 +12,4 @@ a Spark Docker container and a deployment script.
 - Docker is has to be installed on cluster machines.
 - You need password-less SSH login to each of the machines in a cluster from a deployment machine.
 
-If you want to use OracleJDK there is `Dockerfile-OracleJDK` file which you can use. I did't want to use it because, as
-I understand, the current licence of OracleJDK doesn't allow to distribute it inside a docker container build on Linux.
+If you want to use OracleJDK there is Dockerfile-OracleJDK file which you can use. I didn't want to use it because, as I understand, the current license of OracleJDK doesn't allow to distribute it inside a docker container build on Linux.
