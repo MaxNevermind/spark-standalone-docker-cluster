@@ -21,3 +21,7 @@ export WORKER_NUMBER_PER_SLAVE=1
 export WORKER_MEMORY=2G
 export WORKER_CORES=1
 export SPARK_IMAGE=maxnevermind/spark:2.2.0
+
+# Ports
+export MASTER_PORT=7077
+export MASTER_WEB_UI_PORT=8080
