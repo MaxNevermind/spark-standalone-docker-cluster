@@ -30,6 +30,14 @@ cluster. Configured in `log4j.properties`.
 - /usr/share/spark/work/app_id/executor_id/ App working directory including stderr & stdout & app jar
 
 # Miscellaneous
-If you want to run multiple Workers on the same node then you might benefit from using Dockers's `--cpuset-cpus`
+
+## Multiple clusters on the same hardware
+To run multiple clusters on the same machines you have to change config env variables : CLUSTER_PREFIX, MASTER_PORT, 
+MASTER_WEB_UI_PORT for each new cluster.
+
+Also if you want to run multiple Workers on the same node then you might benefit from using Dockers's `--cpuset-cpus`
 parameter. It splits CPUs between Docker processes. An example of setting 4-7 CPUs of a machine for Docker process: 
-`docker run --cpuset-cpus="4-7" ...`
+`docker run --cpuset-cpus="4-7" ...` 
+
+## OracleJDK
+If you want to use OracleJDK there is Dockerfile-OracleJDK file which you can use. I didn't want to use it because, as I understand, the current license of OracleJDK doesn't allow to distribute it inside a docker container build on Linux.
