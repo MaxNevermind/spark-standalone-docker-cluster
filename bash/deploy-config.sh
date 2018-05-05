@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# This is a pattern of a config file for deployment script.
+# This is a pattern of a config file for deployment script, see README.md for more details.
 
 # IMPORTANT! Do not just run this file, use "Sourcing a File" and after that run a deployment script itself.
 # Example
@@ -20,8 +20,9 @@ export CLUSTER_PREFIX="etl"
 export WORKER_NUMBER_PER_SLAVE=1
 export WORKER_MEMORY=2G
 export WORKER_CORES=1
-export SPARK_IMAGE=maxnevermind/spark:2.2.0
+export SPARK_IMAGE=gpnx/spark:2.2.0
 
 # Ports
 export MASTER_PORT=7077
 export MASTER_WEB_UI_PORT=8080
+export HISTORY_SERVER_WEB_UI_PORT=18080

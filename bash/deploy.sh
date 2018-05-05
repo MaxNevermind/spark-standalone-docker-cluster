@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 
 # This is a deployment script for Docker spark cluster, see README.md for more details.
+#
+# Usage: deploy.sh (start|stop|restart)
+
 
 set -e
 
@@ -31,6 +34,7 @@ echo "Checking existence of all needed configuration environment variables"
 : ${SPARK_IMAGE?"Need to set SPARK_IMAGE"}
 : ${MASTER_PORT?"Need to set MASTER_PORT"}
 : ${MASTER_WEB_UI_PORT?"Need to set MASTER_WEB_UI_PORT"}
+: ${HISTORY_SERVER_WEB_UI_PORT?"Need to set HISTORY_SERVER_WEB_UI_PORT"}
 
 # SSH params
 sshKeyPath=$SSH_KEY_PATH
@@ -50,32 +54,44 @@ sparkImage=$SPARK_IMAGE
 # Ports
 masterPort=$MASTER_PORT
 masterWebUIPort=$MASTER_WEB_UI_PORT
+historyServerWebUIPort=$HISTORY_SERVER_WEB_UI_PORT
+
+hostDriverLogsDir=/tmp/docker-mounts/${clusterPrefix}-driver-logs
+hostSparkEventsDir=/tmp/docker-mounts/${clusterPrefix}-spark-events
 
 function startMaster {
     echo "Starting master"
-    hostIp=$1
+    historyServerPortConfig="spark.history.ui.port   $historyServerWebUIPort"
     ssh -o "StrictHostKeyChecking no" -i $sshKeyPath $clusterUser@$masterIp \
-        "sudo docker run -id \
+        "sudo mkdir -p $hostDriverLogsDir; \
+         sudo mkdir -p $hostSparkEventsDir; \
+         sudo chmod -R 666 $hostDriverLogsDir; \
+         sudo chmod -R 666 $hostSparkEventsDir; \
+         sudo docker run -id \
             --restart unless-stopped \
             --log-opt max-size=200m \
+            --volume $hostDriverLogsDir:/usr/share/logs/ \
+            --volume $hostSparkEventsDir:/tmp/spark-events \
             --net=host \
             --name='${clusterPrefix}_spark_master' \
             $sparkImage \
             /bin/bash -c \
-            '/usr/share/spark/sbin/start-master.sh --port $masterPort --webui-port $masterWebUIPort;
+            'echo $historyServerPortConfig >> /usr/share/spark/conf/spark-defaults.conf; \
+            /usr/share/spark/sbin/start-master.sh --port $masterPort --webui-port $masterWebUIPort;
+            /usr/share/spark/sbin/start-history-server.sh;
             /bin/bash'"
 }
 
 function startSlave {
     hostIp=$1
     workerIdx=$2
-    echo "Starting worker #$workerIdx on $hostIp"
+    echo "Starting worker № $workerIdx on a node $hostIp"
     ssh -o "StrictHostKeyChecking no" -i $sshKeyPath $clusterUser@$hostIp \
         "sudo docker run -id \
             --restart unless-stopped \
             --log-opt max-size=200m \
             --net=host \
-            --name='${clusterPrefix}_spark_worker_${workerIdx}' \
+            --name='${clusterPrefix}_spark_worker_${slaveIp}_${workerIdx}' \
             $sparkImage \
             /bin/bash -c \
             '/usr/share/spark/sbin/start-slave.sh spark://$masterIp:$masterPort --cores $workerCores --memory $workerMemory;
